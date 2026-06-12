@@ -316,7 +316,10 @@
   .trust .t-card{padding:30px;border-radius:20px;background:var(--glass);border:1px solid var(--hairline)}
   .trust h3{font-size:18px;margin-bottom:10px}
   .trust p{font-size:14.5px;color:var(--dim)}
-  .trust .glyph{font-size:26px;margin-bottom:14px}
+  .trust .t-ill{width:96px;height:96px;margin-bottom:16px;
+    filter:drop-shadow(0 6px 22px rgba(212,175,55,.28));
+    transition:transform .3s ease}
+  .trust .t-card:hover .t-ill{transform:scale(1.07) rotate(-2deg)}
 
   /* ---------- WHY LUNARA (comparison) ---------- */
   .vs{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
@@ -328,9 +331,11 @@
   .vs-row .ours{background:rgba(212,175,55,.08);color:var(--cream);
     border-left:1px solid var(--hairline-gold)}
   .vs-row .ours b{color:var(--gold-hi)}
-  .vs-head{display:grid;grid-template-columns:1fr 1fr;max-width:820px;margin:0 auto 4px;
-    font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);text-align:center}
-  .vs-head .r{color:var(--gold)}
+  .vs-head{display:grid;grid-template-columns:1fr 1fr;max-width:820px;margin:0 auto 10px;
+    align-items:center;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);text-align:center}
+  .vs-head .r{color:var(--gold);display:flex;align-items:center;justify-content:center;gap:9px}
+  .vs-head .r img{width:30px;height:30px;border-radius:8px;border:1px solid var(--hairline-gold);
+    box-shadow:0 0 14px rgba(212,175,55,.35)}
   @media (max-width:640px){
     .vs-row{grid-template-columns:1fr}
     .vs-row .ours{border-left:none;border-top:1px solid var(--hairline-gold)}
@@ -584,13 +589,13 @@
   <!-- TRUST -->
   <section>
     <div class="trust">
-      <div class="t-card reveal"><div class="glyph">🕯️</div>
+      <div class="t-card reveal"><img class="t-ill" src="assets/trust_grounded.webp" alt="" loading="lazy">
         <h3 class="serif">Grounded, not generated</h3>
         <p>Interpretations quote the classical texts bundled inside the app. The deck is drawn with honest randomness — your daily card is yours alone, stable all day.</p></div>
-      <div class="t-card reveal d1"><div class="glyph">🌙</div>
+      <div class="t-card reveal d1"><img class="t-ill" src="assets/trust_mirror.webp" alt="" loading="lazy">
         <h3 class="serif">A mirror, not a prediction</h3>
         <p>Lunara is built for reflection and self-knowledge. No fear-mongering, no doom — and never medical, legal or financial advice.</p></div>
-      <div class="t-card reveal d2"><div class="glyph">🔒</div>
+      <div class="t-card reveal d2"><img class="t-ill" src="assets/trust_private.webp" alt="" loading="lazy">
         <h3 class="serif">Private by design</h3>
         <p>Your profile, readings and journal stay on your device. No account. No ads. No analytics SDKs. We don't sell your data — there's nothing to sell.</p></div>
     </div>
@@ -602,7 +607,7 @@
       <div class="overline reveal">Why Lunara</div>
       <h2 class="serif reveal d1">Most tarot apps guess.<br><span class="goldtext">Lunara knows its sources.</span></h2>
     </div>
-    <div class="vs-head reveal"><span>Most tarot apps</span><span class="r">Lunara</span></div>
+    <div class="vs-head reveal"><span>Most tarot apps</span><span class="r"><img src="assets/app_icon.webp" alt="">Lunara</span></div>
     <div class="vs">
       <div class="vs-row reveal">
         <div class="other">Generic AI text that could be about anyone — or copy-pasted card meanings.</div>
@@ -654,6 +659,7 @@
   <footer>
     <span>© 2026 Artem Osetrov · Lunara</span>
     <span class="spacer"></span>
+    <a href="https://www.osetrovdesign.com/" target="_blank" rel="noopener">Made at Osetrov Design ✦</a>
     <a href="privacy.html">Privacy Policy</a>
     <a href="terms.html">Terms of Use</a>
     <a href="mailto:osetrov.artem@gmail.com">Contact</a>
