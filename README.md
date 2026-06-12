@@ -8,14 +8,14 @@ Static pages for Lunara — Privacy Policy and Terms of Service.
 2. Upload `privacy.html` and `terms.html` to root
 3. Settings → Pages → Branch: `main` → `/root` → Save
 4. Wait 1–2 min, pages live at:
-   - https://osetrov.github.io/lunara-legal/privacy.html
-   - https://osetrov.github.io/lunara-legal/terms.html
+   - https://artosetrov.github.io/lunara-legal/privacy.html
+   - https://artosetrov.github.io/lunara-legal/terms.html
 
 ## Использование в App Store Connect
 
 В разделах `App Information`:
-- Privacy Policy URL: `https://osetrov.github.io/lunara-legal/privacy.html`
-- Marketing URL (optional): `https://osetrov.github.io/lunara-legal/`
+- Privacy Policy URL: `https://artosetrov.github.io/lunara-legal/privacy.html`
+- Marketing URL (optional): `https://artosetrov.github.io/lunara-legal/`
 
 В разделе `App Privacy → Manage`:
 - Указать те же данные, что описаны в privacy.html (User Content, Identifiers, etc.)

@@ -10,10 +10,10 @@
 #   3. Запусти этот скрипт:  bash publish.sh
 #
 # После запуска:
-#   4. Открой https://github.com/osetrov/lunara-legal/settings/pages
+#   4. Открой https://github.com/artosetrov/lunara-legal/settings/pages
 #   5. Source = Deploy from a branch
 #   6. Branch = main, folder = / (root) → Save
-#   7. Через ~1 минуту проверь https://osetrov.github.io/lunara-legal/privacy.html
+#   7. Через ~1 минуту проверь https://artosetrov.github.io/lunara-legal/privacy.html
 
 set -e
 cd "$(dirname "$0")"
@@ -30,7 +30,7 @@ if [ ! -d .git ]; then
   git commit -m "Initial: Lunara privacy policy + terms of service"
   echo ""
   echo "🌐 Добавляю remote origin..."
-  git remote add origin https://github.com/osetrov/lunara-legal.git
+  git remote add origin https://github.com/artosetrov/lunara-legal.git
 else
   echo "🔁 Repo уже инициализирован — commit изменений..."
   git add .
@@ -45,11 +45,11 @@ echo ""
 echo "✅ Pushed."
 echo ""
 echo "ТЕПЕРЬ открой:"
-echo "   https://github.com/osetrov/lunara-legal/settings/pages"
+echo "   https://github.com/artosetrov/lunara-legal/settings/pages"
 echo "и убедись что:"
 echo "   • Source: Deploy from a branch"
 echo "   • Branch: main / (root)"
 echo ""
 echo "Через 1-2 минуты страницы будут доступны:"
-echo "   https://osetrov.github.io/lunara-legal/privacy.html"
-echo "   https://osetrov.github.io/lunara-legal/terms.html"
+echo "   https://artosetrov.github.io/lunara-legal/privacy.html"
+echo "   https://artosetrov.github.io/lunara-legal/terms.html"

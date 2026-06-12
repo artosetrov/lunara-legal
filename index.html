@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lunara — AI Tarot Reading, Daily Card & Tarot Journal for iPhone</title>
+<meta name="description" content="Pull your daily tarot card, get AI tarot readings in four voices grounded in the original 1911 texts, follow moon rituals, and keep a private tarot journal that notices your patterns. Free to start on iPhone.">
+<link rel="canonical" href="https://lunaratarot.app/">
+<meta property="og:title" content="Lunara — AI Tarot Reading & Tarot Journal">
+<meta property="og:description" content="Pull a card. Hear it read in four voices. Watch your journal notice the patterns in your story.">
+<meta property="og:image" content="https://lunaratarot.app/assets/ill_lunara.webp">
+<meta property="og:url" content="https://lunaratarot.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lunara">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lunara — AI Tarot Reading & Tarot Journal">
+<meta name="twitter:description" content="Daily tarot card, four reading voices, moon rituals and a private journal. iPhone.">
+<meta name="twitter:image" content="https://lunaratarot.app/assets/ill_lunara.webp">
+<link rel="icon" href="assets/app_icon.webp">
+<link rel="preload" as="image" href="assets/ill_lunara.webp">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Lunara: Tarot Journal & Guide",
+  "operatingSystem": "iOS",
+  "applicationCategory": "LifestyleApplication",
+  "description": "AI tarot readings grounded in classical sources, a daily tarot card with Home Screen widget, moon rituals, and a private on-device tarot journal.",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "author": {"@type": "Person", "name": "Artem Osetrov"},
+  "url": "https://lunaratarot.app/",
+  "image": "https://lunaratarot.app/assets/ill_lunara.webp"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "Is Lunara's AI tarot reading just ChatGPT?",
+     "acceptedAnswer": {"@type": "Answer", "text": "No. Lunara's interpretations are grounded in source texts bundled inside the app — A. E. Waite's The Pictorial Key to the Tarot (1911), Jungian archetype notes and Golden Dawn astrological correspondences. You choose the voice: warm guide, classical scholar, depth psychologist or astrologer."}},
+    {"@type": "Question", "name": "How does the daily tarot card work?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Your card of the day is drawn once for you and stays the same all day — even on your Home Screen widget. It is interpreted through your zodiac sign and saved into your journal automatically."}},
+    {"@type": "Question", "name": "Is Lunara free?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Yes — the daily card, single and three-card spreads, horoscope, moon calendar and journal are free. Premium unlocks the Celtic Cross spread, unlimited readings and chat with Lunara."}},
+    {"@type": "Question", "name": "Can tarot predict the future?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Lunara treats tarot as a mirror for reflection, not a prediction. Readings are designed for self-knowledge and clarity — never as medical, legal or financial advice."}},
+    {"@type": "Question", "name": "What happens to my data?",
+     "acceptedAnswer": {"@type": "Answer", "text": "Your profile, readings and journal stay on your device. There is no account, no ads and no analytics SDKs. Lunara doesn't sell your data."}}
+  ]
+}
+</script>
+<style>
+  :root{
+    --bg0:#0C0718; --bg1:#150B2E; --bg2:#241544;
+    --gold:#D4AF37; --gold-hi:#F4E2A0; --gold-deep:#A87E1E;
+    --cream:#F5F0E8; --violet:#6F4EA8;
+    --dim:rgba(245,240,232,.66); --faint:rgba(245,240,232,.42);
+    --hairline:rgba(255,255,255,.12); --hairline-gold:rgba(212,175,55,.35);
+    --glass:rgba(255,255,255,.055);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg0); color:var(--cream);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    overflow-x:hidden; line-height:1.6;
+  }
+  .serif{font-family:Georgia,"Times New Roman",serif}
+  #sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .veil{position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:
+      radial-gradient(60% 50% at 0% 0%, rgba(111,78,168,.40), transparent 70%),
+      radial-gradient(55% 45% at 100% 10%, rgba(67,33,92,.38), transparent 70%),
+      radial-gradient(70% 60% at 50% 115%, rgba(74,58,140,.32), transparent 70%);
+  }
+  main{position:relative;z-index:2}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  .goldtext{
+    background:linear-gradient(110deg,var(--gold-hi) 20%,var(--gold) 40%,var(--gold-deep) 60%,var(--gold-hi) 80%);
+    background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:shimmer 6s linear infinite;
+  }
+  @keyframes shimmer{to{background-position:-220% 0}}
+  .overline{font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--faint)}
+
+  /* scroll reveal */
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .reveal.d1{transition-delay:.1s}.reveal.d2{transition-delay:.2s}.reveal.d3{transition-delay:.3s}
+
+  /* ---------- NAV ---------- */
+  nav{display:flex;align-items:center;gap:12px;padding:22px 0}
+  nav img{width:40px;height:40px;border-radius:10px;border:1px solid var(--hairline-gold)}
+  nav .name{font-size:19px;font-weight:700}
+  nav .spacer{flex:1}
+  nav a{color:var(--dim);text-decoration:none;font-size:14px;margin-left:20px}
+  nav a:hover{color:var(--gold-hi)}
+
+  /* ---------- HERO ---------- */
+  .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;
+        min-height:74vh;padding:30px 0 40px}
+  .hero h1{font-size:clamp(38px,5.2vw,60px);line-height:1.12;font-weight:700;margin:18px 0}
+  .hero p.lead{font-size:19px;color:var(--dim);max-width:30em;margin-bottom:30px}
+  .badges{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .badges img{height:54px}
+  .badges .note{font-size:13px;color:var(--faint)}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .chip{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+        background:var(--glass);border:1px solid var(--hairline);font-size:13px;color:var(--dim)}
+  .chip img{width:22px;height:22px;border-radius:50%}
+
+  .stage{position:relative;height:540px}
+  .stage .halo{position:absolute;inset:-40px;border-radius:50%;
+    background:radial-gradient(closest-side, rgba(212,175,55,.18), transparent 70%);
+    animation:breath 5.2s ease-in-out infinite}
+  .stage .lunara{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);
+    width:min(440px,90%);
+    -webkit-mask-image:radial-gradient(closest-side, #000 62%, transparent 98%);
+    mask-image:radial-gradient(closest-side, #000 62%, transparent 98%);}
+  .fcard{position:absolute;width:118px;border-radius:12px;border:1px solid var(--hairline-gold);
+    box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 34px rgba(212,175,55,.25)}
+  .fcard.c1{left:4%;bottom:6%;rotate:-12deg}
+  .fcard.c2{left:39%;bottom:0%;rotate:2deg;width:130px;z-index:2}
+  .fcard.c3{right:4%;bottom:7%;rotate:13deg}
+  @keyframes breath{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+  .float{animation:floaty 7s ease-in-out infinite}
+  .float.d1{animation-delay:-2s}.float.d2{animation-delay:-4.5s}
+  @keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -12px}}
+
+  /* ---------- PULL A CARD (interactive demo) ---------- */
+  .pull{position:relative;text-align:center;padding:100px 0 110px}
+  .pull-stage{position:relative;height:430px;margin-top:46px;perspective:1200px}
+  .deck{position:absolute;left:50%;top:50%;translate:-50% -50%;width:190px;aspect-ratio:2/3;
+        cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .deck .stackcard{position:absolute;inset:0;border-radius:16px;
+    background:center/cover url('assets/card_back.webp');
+    border:1px solid var(--hairline-gold);
+    box-shadow:0 16px 50px rgba(0,0,0,.55),0 0 30px rgba(212,175,55,.22)}
+  .deck .s1{rotate:-7deg;translate:-12px 6px}
+  .deck .s2{rotate:4deg;translate:8px 2px}
+  .deck .s3{rotate:-1deg}
+  .deck:hover .s3{translate:0 -10px;transition:translate .3s ease}
+  .deck.gone{opacity:0;pointer-events:none;transition:opacity .4s ease}
+
+  .flipcard{position:absolute;left:50%;top:50%;width:230px;aspect-ratio:2/3;
+    translate:-50% -50%;transform-style:preserve-3d;
+    transition:transform 1s cubic-bezier(.2,.75,.25,1);transform:rotateY(0deg) scale(.84);
+    opacity:0;pointer-events:none}
+  .flipcard.live{opacity:1}
+  .flipcard.flipped{transform:rotateY(180deg) scale(1)}
+  .flipcard .face{position:absolute;inset:0;border-radius:18px;backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;border:1.5px solid var(--gold);
+    box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 60px rgba(212,175,55,.4);overflow:hidden}
+  .flipcard .back{background:center/cover url('assets/card_back.webp')}
+  .flipcard .front{transform:rotateY(180deg)}
+  .flipcard .front img{width:100%;height:100%;object-fit:cover}
+
+  .pull-result{max-width:34em;margin:30px auto 0;min-height:120px;opacity:0;
+    transform:translateY(14px);transition:opacity .7s ease .55s, transform .7s ease .55s}
+  .pull-result.show{opacity:1;transform:none}
+  .pull-result h3{font-size:30px;margin-bottom:8px}
+  .pull-result p{color:var(--dim);font-style:italic;font-size:17px}
+  .pull-actions{margin-top:22px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    opacity:0;transition:opacity .6s ease .9s}
+  .pull-actions.show{opacity:1}
+  .btn-ghost{padding:12px 22px;border-radius:999px;border:1px solid var(--hairline-gold);
+    background:transparent;color:var(--gold-hi);font-size:15px;cursor:pointer}
+  .btn-ghost:hover{background:rgba(212,175,55,.1)}
+  .btn-gold{display:inline-block;padding:12px 24px;border-radius:999px;text-decoration:none;
+    background:linear-gradient(135deg,var(--gold-hi),var(--gold) 55%,var(--gold-deep));
+    color:#231405;font-weight:600;font-size:15px;box-shadow:0 0 30px rgba(212,175,55,.35)}
+  .appstore-btn{display:inline-flex;align-items:center;gap:12px;
+    padding:11px 22px 11px 18px;border-radius:14px;text-decoration:none;
+    background:#000;border:1px solid var(--hairline-gold);
+    box-shadow:0 0 26px rgba(212,175,55,.22);
+    transition:transform .2s ease, box-shadow .2s ease}
+  .appstore-btn:hover{transform:translateY(-2px);box-shadow:0 6px 34px rgba(212,175,55,.38)}
+  .appstore-btn svg{width:26px;height:26px;fill:var(--cream);flex:0 0 auto}
+  .appstore-btn .txt{display:flex;flex-direction:column;line-height:1.15;text-align:left}
+  .appstore-btn .txt small{font-size:10.5px;color:var(--dim);letter-spacing:.02em}
+  .appstore-btn .txt b{font-size:17px;color:var(--cream);font-weight:600}
+  .appstore-btn.big .txt b{font-size:19px}
+  .appstore-btn.big svg{width:30px;height:30px}
+  .hint-tap{color:var(--faint);font-size:14px;margin-top:18px;animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.55}50%{opacity:1}}
+
+  /* burst canvas overlays the pull stage */
+  #burst{position:absolute;inset:0;pointer-events:none}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:90px 0}
+  .sec-head{text-align:center;max-width:46em;margin:0 auto 54px}
+  .sec-head h2{font-size:clamp(28px,3.6vw,40px);margin:12px 0 14px}
+  .sec-head p{color:var(--dim);font-size:17px}
+
+  .guides{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+  .guide{text-align:center;padding:28px 18px;border-radius:20px;background:var(--glass);
+    border:1px solid var(--hairline);transition:border-color .25s, box-shadow .25s;
+    transform-style:preserve-3d;will-change:transform}
+  .guide:hover{border-color:var(--hairline-gold);box-shadow:0 18px 50px rgba(212,175,55,.18)}
+  .guide img{width:120px;height:120px;border-radius:50%;border:1px solid var(--hairline-gold);
+    box-shadow:0 0 28px rgba(212,175,55,.30);transform:translateZ(30px)}
+  .guide h3{font-size:18px;margin:16px 0 6px;transform:translateZ(20px)}
+  .guide p{font-size:13.5px;color:var(--dim);transform:translateZ(12px)}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+  .split .visual{display:flex;justify-content:center}
+  .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;max-width:380px}
+  .stat{padding:20px;border-radius:16px;background:var(--glass);border:1px solid var(--hairline);text-align:center}
+  .stat .n{font-size:30px;font-weight:700}
+  .stat .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+  .feature-list{list-style:none}
+  .feature-list li{display:flex;gap:14px;margin:18px 0;color:var(--dim);font-size:16px}
+  .feature-list li::before{content:"✦";color:var(--gold);flex:0 0 auto}
+
+  .moons{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+  .moon{text-align:center;width:104px}
+  .moon img{width:84px;height:84px;border-radius:50%;border:1px solid var(--hairline-gold);
+    transition:transform .25s ease, box-shadow .25s ease}
+  .moon.now img{width:104px;height:104px;box-shadow:0 0 36px rgba(212,175,55,.5);border-color:var(--gold)}
+  .moon:hover img{transform:scale(1.08)}
+  .moon .t{font-size:11.5px;color:var(--faint);margin-top:8px}
+  .moon.now .t{color:var(--gold-hi)}
+
+  .belt{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+        mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .belt-track{display:flex;gap:34px;width:max-content;animation:slide 42s linear infinite;padding:10px 0}
+  .belt img{width:108px;height:108px;border-radius:50%;border:1px solid var(--hairline-gold);
+    box-shadow:0 0 22px rgba(212,175,55,.22);transition:transform .25s}
+  .belt img:hover{transform:scale(1.12)}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* ---------- SCREENS SHOWCASE ---------- */
+  .screens{display:flex;gap:30px;overflow-x:auto;padding:30px 48px 40px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+  .screens::-webkit-scrollbar{display:none}
+  .shot{flex:0 0 auto;width:236px;scroll-snap-align:center;text-align:center}
+  .shot .frame{border-radius:34px;overflow:hidden;border:1.5px solid var(--hairline-gold);
+    box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 40px rgba(212,175,55,.16);
+    transition:transform .3s ease, box-shadow .3s ease;
+    background:#000}
+  .shot:nth-child(odd) .frame{transform:rotate(-1.4deg)}
+  .shot:nth-child(even) .frame{transform:rotate(1.4deg)}
+  .shot:hover .frame{transform:rotate(0) translateY(-10px) scale(1.03);
+    box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 60px rgba(212,175,55,.32)}
+  .shot img{display:block;width:100%}
+  .shot .cap{margin-top:14px;font-size:13.5px;color:var(--dim)}
+  .shot .cap b{color:var(--gold-hi);font-weight:600}
+  .screens-fade{position:relative}
+
+  .trust{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .trust .t-card{padding:30px;border-radius:20px;background:var(--glass);border:1px solid var(--hairline)}
+  .trust h3{font-size:18px;margin-bottom:10px}
+  .trust p{font-size:14.5px;color:var(--dim)}
+  .trust .glyph{font-size:26px;margin-bottom:14px}
+
+  /* ---------- WHY LUNARA (comparison) ---------- */
+  .vs{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+  .vs-row{display:grid;grid-template-columns:1fr 1fr;border-radius:18px;overflow:hidden;
+    border:1px solid var(--hairline)}
+  .vs-row .other,.vs-row .ours{padding:22px 24px;font-size:15px}
+  .vs-row .other{background:rgba(255,255,255,.03);color:var(--faint)}
+  .vs-row .other s{text-decoration-color:rgba(245,240,232,.3)}
+  .vs-row .ours{background:rgba(212,175,55,.08);color:var(--cream);
+    border-left:1px solid var(--hairline-gold)}
+  .vs-row .ours b{color:var(--gold-hi)}
+  .vs-head{display:grid;grid-template-columns:1fr 1fr;max-width:820px;margin:0 auto 4px;
+    font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);text-align:center}
+  .vs-head .r{color:var(--gold)}
+  @media (max-width:640px){
+    .vs-row{grid-template-columns:1fr}
+    .vs-row .ours{border-left:none;border-top:1px solid var(--hairline-gold)}
+    .vs-head{display:none}
+  }
+
+  .faq-list{max-width:680px;margin:0 auto}
+  .faq-list details{border-bottom:1px solid var(--hairline);padding:20px 4px}
+  .faq-list summary{cursor:pointer;font-size:17px;font-weight:600;color:var(--cream);
+    list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+  .faq-list summary::-webkit-details-marker{display:none}
+  .faq-list summary::after{content:"+";color:var(--gold);font-size:22px;flex:0 0 auto;
+    transition:transform .25s ease}
+  .faq-list details[open] summary::after{transform:rotate(45deg)}
+  .faq-list p{margin-top:12px;color:var(--dim);font-size:15.5px}
+
+  .cta{text-align:center;padding:110px 0 130px}
+  .cta h2{font-size:clamp(30px,4vw,46px);margin-bottom:14px}
+  .cta p{color:var(--dim);margin-bottom:34px}
+
+  footer{border-top:1px solid var(--hairline);padding:34px 0 60px;
+    display:flex;gap:24px;align-items:center;flex-wrap:wrap;color:var(--faint);font-size:13.5px}
+  footer a{color:var(--dim);text-decoration:none}
+  footer a:hover{color:var(--gold-hi)}
+  footer .spacer{flex:1}
+
+  @media (max-width:880px){
+    .hero{grid-template-columns:1fr;min-height:auto;text-align:center}
+    .hero p.lead{margin-inline:auto}
+    .badges{justify-content:center}.chips{justify-content:center}
+    .stage{height:430px;order:-1}
+    .guides{grid-template-columns:repeat(2,1fr)}
+    .split{grid-template-columns:1fr}
+    .trust{grid-template-columns:1fr}
+    .pull-stage{height:400px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .float,.stage .halo,.belt-track,.goldtext,.hint-tap{animation:none}
+    .reveal{opacity:1;transform:none;transition:none}
+    .flipcard{transition:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="veil"></div>
+
+<main>
+<div class="wrap">
+
+  <nav>
+    <img src="assets/app_icon.webp" alt="Lunara icon">
+    <span class="name serif">Lunara</span>
+    <span class="spacer"></span>
+    <a href="#pull">Try it</a>
+    <a href="#screens">Screens</a>
+    <a href="#guides">Guides</a>
+    <a href="#moon">Moon</a>
+    <a href="#why">Why</a>
+    <a href="#faq">FAQ</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <div class="overline reveal">Tarot · Astrology · Self-Reflection</div>
+      <h1 class="serif reveal d1">Your spiritual journal with a <span class="goldtext">living guide</span></h1>
+      <p class="lead reveal d2">Pull a card, ask your question, and let Lunara answer — in the voice of a classical scholar, a depth psychologist, or an astrologer. Every reading is saved into a private journal that notices the patterns in your story.</p>
+      <div class="badges reveal d3">
+<a id="appstore-link" class="appstore-btn" href="#" aria-label="Download on the App Store"><svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg><span class="txt"><small>Download on the</small><b>App Store</b></span></a>
+        <span class="note">For iPhone · Private by design</span>
+      </div>
+      <div class="chips reveal d3">
+        <span class="chip"><img src="assets/guide_lunara.webp" alt="">Warm guidance</span>
+        <span class="chip"><img src="assets/guide_classic.webp" alt="">Waite, 1911</span>
+        <span class="chip"><img src="assets/guide_psychologist.webp" alt="">Jungian depth</span>
+        <span class="chip"><img src="assets/guide_astrologer.webp" alt="">Signs & planets</span>
+      </div>
+    </div>
+    <div class="stage" id="stage">
+      <div class="halo"></div>
+      <img class="lunara float" src="assets/ill_lunara.webp" alt="Lunara, your tarot guide, at her table">
+      <img class="fcard c1 float d1 px" data-d="18" src="assets/card_moon.webp" alt="The Moon tarot card">
+      <img class="fcard c2 float d2 px" data-d="30" src="assets/card_star.webp" alt="The Star tarot card">
+      <img class="fcard c3 float px" data-d="22" src="assets/card_sun.webp" alt="The Sun tarot card">
+    </div>
+  </header>
+
+  <!-- PULL A CARD -->
+  <section class="pull" id="pull">
+    <div class="overline reveal">A taste of the ritual</div>
+    <h2 class="serif reveal d1" style="font-size:clamp(30px,4vw,44px);margin-top:12px">
+      The cards are listening.<br><span class="goldtext">Pull one.</span></h2>
+    <div class="pull-stage reveal d2">
+      <canvas id="burst"></canvas>
+      <div class="deck" id="deck" role="button" aria-label="Pull a card" tabindex="0">
+        <div class="stackcard s1"></div>
+        <div class="stackcard s2"></div>
+        <div class="stackcard s3"></div>
+      </div>
+      <div class="flipcard" id="flipcard" aria-live="polite">
+        <div class="face back"></div>
+        <div class="face front"><img id="cardimg" src="" alt=""></div>
+      </div>
+    </div>
+    <div class="hint-tap" id="pull-hint">tap the deck</div>
+    <div class="pull-result" id="pull-result">
+      <h3 class="serif goldtext" id="card-name"></h3>
+      <p id="card-msg"></p>
+    </div>
+    <div class="pull-actions" id="pull-actions">
+      <button class="btn-ghost" id="again">Pull another</button>
+      <a class="btn-gold" href="#" id="appstore-link3">Get your full reading →</a>
+    </div>
+  </section>
+
+  <!-- GUIDES -->
+  <section id="guides">
+    <div class="sec-head">
+      <div class="overline reveal">Three Schools of Interpretation</div>
+      <h2 class="serif reveal d1">The same cards. <span class="goldtext">Four voices.</span></h2>
+      <p class="reveal d2">Lunara's readings are grounded in real sources built into the app — the original 1911 divinatory texts, Jungian archetypes, and classical astrological correspondences. Not generic AI output.</p>
+    </div>
+    <div class="guides">
+      <div class="guide tilt reveal"><img src="assets/guide_lunara.webp" alt="Lunara">
+        <h3 class="serif">Lunara</h3><p>Warm, modern guidance. A friend who listens first and reads second.</p></div>
+      <div class="guide tilt reveal d1"><img src="assets/guide_classic.webp" alt="The Classicist">
+        <h3 class="serif">The Classicist</h3><p>Strictly by A.&nbsp;E.&nbsp;Waite's <em>Pictorial Key to the Tarot</em> — quoted from the original.</p></div>
+      <div class="guide tilt reveal d2"><img src="assets/guide_psychologist.webp" alt="The Psychologist">
+        <h3 class="serif">The Psychologist</h3><p>Archetypes, shadow work and gentle questions for your inner life.</p></div>
+      <div class="guide tilt reveal d3"><img src="assets/guide_astrologer.webp" alt="The Astrologer">
+        <h3 class="serif">The Astrologer</h3><p>Every card read through its sign, planet and decan.</p></div>
+    </div>
+  </section>
+
+  <!-- SCREENS -->
+  <section id="screens">
+    <div class="sec-head">
+      <div class="overline reveal">Inside the app</div>
+      <h2 class="serif reveal d1">Every screen, <span class="goldtext">a small ritual</span></h2>
+      <p class="reveal d2">Swipe through — this is exactly how it looks tonight.</p>
+    </div>
+    <div class="screens-fade reveal d2">
+      <div class="screens">
+        <div class="shot"><div class="frame"><img src="assets/scr_daily.webp" alt="Card of the day screen" loading="lazy"></div>
+          <div class="cap"><b>Card of the Day</b><br>drawn once, yours all day</div></div>
+        <div class="shot"><div class="frame"><img src="assets/scr_guides.webp" alt="Choosing a guide" loading="lazy"></div>
+          <div class="cap"><b>Four guides</b><br>choose who reads for you</div></div>
+        <div class="shot"><div class="frame"><img src="assets/scr_card.webp" alt="Revealed card" loading="lazy"></div>
+          <div class="cap"><b>The reveal</b><br>tap again to hear its message</div></div>
+        <div class="shot"><div class="frame"><img src="assets/scr_chat.webp" alt="Chat with Lunara" loading="lazy"></div>
+          <div class="cap"><b>Chat with Lunara</b><br>like texting a wise friend</div></div>
+        <div class="shot"><div class="frame"><img src="assets/scr_horoscope.webp" alt="Horoscope screen" loading="lazy"></div>
+          <div class="cap"><b>Your horoscope</b><br>under your own medallion</div></div>
+        <div class="shot"><div class="frame"><img src="assets/scr_moon.webp" alt="Moon calendar" loading="lazy"></div>
+          <div class="cap"><b>Moon Calendar</b><br>rituals for every phase</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section id="journal">
+    <div class="split">
+      <div class="reveal">
+        <div class="overline">A journal that notices</div>
+        <h2 class="serif" style="font-size:clamp(26px,3.4vw,38px);margin:12px 0 18px">Your readings remember <span class="goldtext">what you forget</span></h2>
+        <ul class="feature-list">
+          <li>Every card you pull is saved automatically — no accounts, no cloud.</li>
+          <li>Patterns shows which cards keep returning, your dominant element, and your reflection streak.</li>
+          <li>Lunara writes you a personal insight about the thread running through your month.</li>
+          <li>Card of the Day lives on your Home Screen as a widget.</li>
+        </ul>
+      </div>
+      <div class="visual reveal d2">
+        <div class="stats">
+          <div class="stat"><div class="n goldtext serif">78</div><div class="l">hand-illustrated cards</div></div>
+          <div class="stat"><div class="n goldtext serif">1911</div><div class="l">source texts built in</div></div>
+          <div class="stat"><div class="n goldtext serif">4</div><div class="l">reading voices</div></div>
+          <div class="stat"><div class="n goldtext serif">0</div><div class="l">data sold. ever.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOON -->
+  <section id="moon">
+    <div class="sec-head">
+      <div class="overline reveal">Moon Calendar</div>
+      <h2 class="serif reveal d1">A ritual for <span class="goldtext" id="moon-title">every phase</span></h2>
+      <p class="reveal d2">Lunar phases computed on your device — with reflection prompts for each night and gentle reminders on new and full moons. Tonight's moon is highlighted below.</p>
+    </div>
+    <div class="moons reveal d2" id="moons"></div>
+  </section>
+
+  <!-- ZODIAC BELT -->
+  <section>
+    <div class="sec-head">
+      <div class="overline reveal">Astrology, illustrated</div>
+      <h2 class="serif reveal d1">Twelve signs, <span class="goldtext">one universe</span></h2>
+      <p class="reveal d2">Daily and weekly horoscopes under your own hand-drawn medallion.</p>
+    </div>
+    <div class="belt"><div class="belt-track" id="belt"></div></div>
+  </section>
+
+  <!-- TRUST -->
+  <section>
+    <div class="trust">
+      <div class="t-card reveal"><div class="glyph">🕯️</div>
+        <h3 class="serif">Grounded, not generated</h3>
+        <p>Interpretations quote the classical texts bundled inside the app. The deck is drawn with honest randomness — your daily card is yours alone, stable all day.</p></div>
+      <div class="t-card reveal d1"><div class="glyph">🌙</div>
+        <h3 class="serif">A mirror, not a prediction</h3>
+        <p>Lunara is built for reflection and self-knowledge. No fear-mongering, no doom — and never medical, legal or financial advice.</p></div>
+      <div class="t-card reveal d2"><div class="glyph">🔒</div>
+        <h3 class="serif">Private by design</h3>
+        <p>Your profile, readings and journal stay on your device. No account. No ads. No analytics SDKs. We don't sell your data — there's nothing to sell.</p></div>
+    </div>
+  </section>
+
+  <!-- WHY LUNARA -->
+  <section id="why">
+    <div class="sec-head">
+      <div class="overline reveal">Why Lunara</div>
+      <h2 class="serif reveal d1">Most tarot apps guess.<br><span class="goldtext">Lunara knows its sources.</span></h2>
+    </div>
+    <div class="vs-head reveal"><span>Most tarot apps</span><span class="r">Lunara</span></div>
+    <div class="vs">
+      <div class="vs-row reveal">
+        <div class="other">Generic AI text that could be about anyone — or copy-pasted card meanings.</div>
+        <div class="ours"><b>Grounded readings.</b> The original 1911 texts, Jungian archetypes and astrological correspondences are built in — and quoted. Four voices to choose from.</div>
+      </div>
+      <div class="vs-row reveal d1">
+        <div class="other">Every reading vanishes the moment you close the app.</div>
+        <div class="ours"><b>A journal that remembers.</b> Patterns shows which cards keep returning, your dominant element and your streak — then writes you a personal insight.</div>
+      </div>
+      <div class="vs-row reveal d2">
+        <div class="other">Accounts, trackers, contact uploads — your inner life becomes someone's dataset.</div>
+        <div class="ours"><b>Private by design.</b> No account, no ads, no analytics SDKs. Readings never leave your device.</div>
+      </div>
+      <div class="vs-row reveal d3">
+        <div class="other">A stock deck and a paywall on day one.</div>
+        <div class="ours"><b>One artist's universe, free to begin.</b> 78 hand-illustrated cards, four guides, twelve zodiac medallions, eight moons — and your daily ritual costs nothing.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="sec-head">
+      <div class="overline reveal">Questions, answered</div>
+      <h2 class="serif reveal d1">Before you <span class="goldtext">begin</span></h2>
+    </div>
+    <div class="faq-list">
+      <details class="reveal"><summary>Is Lunara's AI tarot reading just ChatGPT?</summary>
+        <p>No. Lunara's interpretations are grounded in source texts bundled inside the app — A.&nbsp;E.&nbsp;Waite's <em>The Pictorial Key to the Tarot</em> (1911), Jungian archetype notes and Golden Dawn astrological correspondences. You choose the voice: warm guide, classical scholar, depth psychologist or astrologer.</p></details>
+      <details class="reveal d1"><summary>How does the daily tarot card work?</summary>
+        <p>Your card of the day is drawn once for you and stays the same all day — even on your Home Screen widget. It is interpreted through your zodiac sign and saved into your journal automatically.</p></details>
+      <details class="reveal d2"><summary>Is Lunara free?</summary>
+        <p>Yes — the daily card, single and three-card spreads, horoscope, moon calendar and journal are free. Premium unlocks the Celtic Cross spread, unlimited readings and chat with Lunara.</p></details>
+      <details class="reveal d2"><summary>Can tarot predict the future?</summary>
+        <p>Lunara treats tarot as a mirror for reflection, not a prediction. Readings are designed for self-knowledge and clarity — never as medical, legal or financial advice.</p></details>
+      <details class="reveal d3"><summary>What happens to my data?</summary>
+        <p>Your profile, readings and journal stay on your device. There is no account, no ads and no analytics SDKs. Lunara doesn't sell your data.</p></details>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="overline reveal">Begin tonight</div>
+    <h2 class="serif reveal d1">Light a candle. Ask your question.<br><span class="goldtext">Lunara is listening.</span></h2>
+    <p class="reveal d2">Free to begin — your first readings are on the house.</p>
+<a id="appstore-link2" class="appstore-btn big reveal d3" href="#" aria-label="Download on the App Store"><svg viewBox="0 0 384 512" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg><span class="txt"><small>Download on the</small><b>App Store</b></span></a>
+  </section>
+
+  <footer>
+    <span>© 2026 Artem Osetrov · Lunara</span>
+    <span class="spacer"></span>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="mailto:osetrov.artem@gmail.com">Contact</a>
+  </footer>
+
+</div>
+</main>
+
+<script>
+(function(){
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(pointer: fine)').matches;
+
+  /* ===== SKY: stars + constellations + shooting stars + cursor dust ===== */
+  const cv = document.getElementById('sky'), ctx = cv.getContext('2d');
+  let W,H,stars=[],cons=[],meteors=[],dust=[];
+  function resize(){
+    W = cv.width = innerWidth * devicePixelRatio;
+    H = cv.height = innerHeight * devicePixelRatio;
+    cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+    stars = Array.from({length: innerWidth < 700 ? 70 : 130}, () => ({
+      x:Math.random(), y:Math.random(), r:(Math.random()*1.3+.5)*devicePixelRatio,
+      a:Math.random()*.5+.5, p:Math.random()*Math.PI*2, bright:Math.random()<.12
+    }));
+    const anchors=[[.12,.18],[.88,.14],[.08,.78],[.92,.82],[.5,.06]];
+    cons = anchors.map(([ax,ay])=>{
+      const n = 5+Math.floor(Math.random()*3);
+      const pts = Array.from({length:n},()=>[ax+(Math.random()-.5)*.5, ay+(Math.random()-.5)*.36]);
+      const edges = pts.slice(1).map((_,i)=>[i,i+1]); edges.push([1,n-1]);
+      return {pts,edges,period:12+Math.random()*8,phase:Math.random()*Math.PI*2};
+    });
+  }
+  resize(); addEventListener('resize', resize);
+
+  function spawnMeteor(){
+    const fromLeft = Math.random()<.5;
+    meteors.push({
+      x:(fromLeft? -.05 : Math.random()*.6+.3)*W, y:Math.random()*.3*H,
+      vx:(2.2+Math.random()*1.6)*devicePixelRatio*(fromLeft?1:.8),
+      vy:(1.1+Math.random()*.9)*devicePixelRatio,
+      life:1
+    });
+  }
+  if(!reduce) setInterval(()=>{ if(document.visibilityState==='visible' && Math.random()<.8) spawnMeteor(); }, 6000);
+
+  if(fine && !reduce){
+    let last=0;
+    addEventListener('mousemove', e=>{
+      const now=performance.now();
+      if(now-last<24) return; last=now;
+      dust.push({x:e.clientX*devicePixelRatio, y:e.clientY*devicePixelRatio,
+                 vx:(Math.random()-.5)*.6, vy:.4+Math.random()*.7, r:(Math.random()*1.4+.6)*devicePixelRatio, life:1});
+      if(dust.length>70) dust.shift();
+    }, {passive:true});
+  }
+
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    for(const c of cons){
+      const pulse = reduce ? .5 : (Math.sin(t/1000*2*Math.PI/c.period + c.phase)+1)/2;
+      const alpha = .06+.22*pulse; if(alpha<.09) continue;
+      ctx.strokeStyle = `rgba(244,226,160,${alpha*.5})`; ctx.lineWidth=.8*devicePixelRatio;
+      ctx.beginPath();
+      for(const [a,b] of c.edges){
+        ctx.moveTo(c.pts[a][0]*W, c.pts[a][1]*H); ctx.lineTo(c.pts[b][0]*W, c.pts[b][1]*H);
+      }
+      ctx.stroke();
+      for(const [x,y] of c.pts){
+        ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+        ctx.beginPath(); ctx.arc(x*W,y*H,1.6*devicePixelRatio,0,7); ctx.fill();
+      }
+    }
+    for(const s of stars){
+      const tw = reduce ? .7 : (Math.sin(t/1000 + s.p)+1)/2*.65+.35;
+      ctx.fillStyle = `rgba(255,255,255,${s.a*tw})`;
+      ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r, 0, 7); ctx.fill();
+      if(s.bright){
+        ctx.fillStyle = `rgba(244,226,160,${s.a*tw*.2})`;
+        ctx.beginPath(); ctx.arc(s.x*W, s.y*H, s.r*3, 0, 7); ctx.fill();
+      }
+    }
+    // meteors
+    for(let i=meteors.length-1;i>=0;i--){
+      const m=meteors[i]; m.x+=m.vx*16; m.y+=m.vy*16; m.life-=.012;
+      if(m.life<=0 || m.x>W*1.1 || m.y>H*.9){ meteors.splice(i,1); continue; }
+      const len = 90*devicePixelRatio;
+      const grad = ctx.createLinearGradient(m.x,m.y,m.x-len*m.vx/3,m.y-len*m.vy/3);
+      grad.addColorStop(0,`rgba(244,226,160,${.9*m.life})`);
+      grad.addColorStop(1,'rgba(244,226,160,0)');
+      ctx.strokeStyle=grad; ctx.lineWidth=1.6*devicePixelRatio;
+      ctx.beginPath(); ctx.moveTo(m.x,m.y);
+      ctx.lineTo(m.x-len*m.vx/3, m.y-len*m.vy/3); ctx.stroke();
+    }
+    // cursor dust
+    for(let i=dust.length-1;i>=0;i--){
+      const d=dust[i]; d.x+=d.vx*devicePixelRatio; d.y+=d.vy*devicePixelRatio; d.life-=.022;
+      if(d.life<=0){ dust.splice(i,1); continue; }
+      ctx.fillStyle=`rgba(244,226,160,${.5*d.life})`;
+      ctx.beginPath(); ctx.arc(d.x,d.y,d.r*d.life,0,7); ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+
+  /* ===== Scroll reveal ===== */
+  const io = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  }, {threshold:.18});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* ===== Hero parallax ===== */
+  const stage = document.getElementById('stage');
+  if(stage && !reduce && fine){
+    stage.addEventListener('mousemove', e=>{
+      const r = stage.getBoundingClientRect();
+      const dx = (e.clientX - r.left)/r.width - .5, dy = (e.clientY - r.top)/r.height - .5;
+      document.querySelectorAll('.px').forEach(el=>{
+        const d = +el.dataset.d;
+        el.style.translate = `${dx*d}px ${dy*d}px`;
+      });
+    });
+    stage.addEventListener('mouseleave', ()=>{
+      document.querySelectorAll('.px').forEach(el=> el.style.translate='0 0');
+    });
+  }
+
+  /* ===== 3D tilt on guide cards ===== */
+  if(fine && !reduce){
+    document.querySelectorAll('.tilt').forEach(card=>{
+      card.style.perspective='800px';
+      card.addEventListener('mousemove', e=>{
+        const r=card.getBoundingClientRect();
+        const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`rotateY(${x*10}deg) rotateX(${-y*10}deg)`;
+      });
+      card.addEventListener('mouseleave', ()=>{ card.style.transform='rotateY(0) rotateX(0)'; });
+    });
+  }
+
+  /* ===== PULL A CARD demo ===== */
+  const cards = [
+    ['card_star','The Star','A quiet light returns. Let yourself believe in the path again.'],
+    ['card_moon','The Moon','Not everything is what it seems tonight — trust what you feel, not what you fear.'],
+    ['card_sun','The Sun','Something in you is ready to be seen. Step into the warmth.'],
+    ['card_fool','The Fool','Every journey worth taking begins with one unreasonable step.'],
+    ['card_priestess','The High Priestess','The answer is already in you. Get quiet enough to hear it.'],
+    ['card_lovers','The Lovers','A choice of the heart is near. Choose what makes you more yourself.'],
+    ['card_wheel','Wheel of Fortune','The wheel is turning. Loosen your grip and ride it.'],
+  ];
+  const deck = document.getElementById('deck'),
+        flip = document.getElementById('flipcard'),
+        img  = document.getElementById('cardimg'),
+        nameEl = document.getElementById('card-name'),
+        msgEl  = document.getElementById('card-msg'),
+        result = document.getElementById('pull-result'),
+        actions= document.getElementById('pull-actions'),
+        hint   = document.getElementById('pull-hint'),
+        burstCv= document.getElementById('burst'),
+        bctx   = burstCv.getContext('2d');
+  let bursts=[], lastIdx=-1;
+
+  function sizeBurst(){
+    const r = burstCv.parentElement.getBoundingClientRect();
+    burstCv.width = r.width*devicePixelRatio; burstCv.height = r.height*devicePixelRatio;
+  }
+  sizeBurst(); addEventListener('resize', sizeBurst);
+
+  function boom(){
+    const cx=burstCv.width/2, cy=burstCv.height/2;
+    for(let i=0;i<26;i++){
+      const a=Math.random()*Math.PI*2, sp=(2+Math.random()*4)*devicePixelRatio;
+      bursts.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1.2*devicePixelRatio,
+                   r:(1.2+Math.random()*2.2)*devicePixelRatio,life:1});
+    }
+    (function anim(){
+      bctx.clearRect(0,0,burstCv.width,burstCv.height);
+      for(let i=bursts.length-1;i>=0;i--){
+        const p=bursts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=.06*devicePixelRatio; p.life-=.02;
+        if(p.life<=0){bursts.splice(i,1);continue;}
+        bctx.fillStyle=`rgba(244,226,160,${p.life})`;
+        bctx.beginPath(); bctx.arc(p.x,p.y,p.r*p.life,0,7); bctx.fill();
+      }
+      if(bursts.length) requestAnimationFrame(anim);
+      else bctx.clearRect(0,0,burstCv.width,burstCv.height);
+    })();
+  }
+
+  function pull(){
+    let i; do { i = Math.floor(Math.random()*cards.length); } while(i===lastIdx);
+    lastIdx=i;
+    const [asset,name,msg]=cards[i];
+    img.src=`assets/${asset}.webp`; img.alt=name;
+    deck.classList.add('gone'); hint.style.display='none';
+    flip.classList.add('live');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      flip.classList.add('flipped');
+      if(!reduce) setTimeout(boom, 480);
+      nameEl.textContent=name; msgEl.textContent='“'+msg+'”';
+      result.classList.add('show'); actions.classList.add('show');
+    }));
+  }
+  function resetPull(){
+    flip.classList.remove('flipped');
+    result.classList.remove('show'); actions.classList.remove('show');
+    setTimeout(()=>{
+      flip.classList.remove('live');
+      deck.classList.remove('gone'); hint.style.display='';
+    }, reduce?0:500);
+  }
+  deck.addEventListener('click', pull);
+  deck.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();pull();} });
+  document.getElementById('again').addEventListener('click', ()=>{ resetPull(); setTimeout(pull, reduce?50:650); });
+
+  /* ===== Live moon phase ===== */
+  const SYNODIC = 29.530588853;
+  const EPOCH = Date.UTC(2000,0,6,18,14)/86400000;
+  const age = (((Date.now()/86400000 - EPOCH) % SYNODIC) + SYNODIC) % SYNODIC;
+  const seg = SYNODIC/8, half = seg/2;
+  const kinds = [
+    ['moon_newMoon','New Moon'],['moon_waxingCrescent','Waxing Crescent'],
+    ['moon_firstQuarter','First Quarter'],['moon_waxingGibbous','Waxing Gibbous'],
+    ['moon_fullMoon','Full Moon'],['moon_waningGibbous','Waning Gibbous'],
+    ['moon_lastQuarter','Last Quarter'],['moon_waningCrescent','Waning Crescent']
+  ];
+  let idx = 0;
+  for(let i=0;i<8;i++){ if(age < half + seg*i){ idx = i; break; } if(i===7) idx = 0; }
+  if(age >= half + seg*7) idx = 0;
+  const moons = document.getElementById('moons');
+  kinds.forEach(([asset,title],i)=>{
+    const d = document.createElement('div');
+    d.className = 'moon'+(i===idx?' now':'');
+    d.innerHTML = `<img src="assets/${asset}.webp" alt="${title}" loading="lazy"><div class="t">${title}${i===idx?' · tonight':''}</div>`;
+    moons.appendChild(d);
+  });
+  document.getElementById('moon-title').textContent = kinds[idx][1].toLowerCase();
+
+  /* ===== Zodiac belt ===== */
+  const signs = ['aries','taurus','gemini','cancer','leo','virgo','libra','scorpio','sagittarius','capricorn','aquarius','pisces'];
+  const belt = document.getElementById('belt');
+  [...signs, ...signs].forEach(s=>{
+    const im = document.createElement('img');
+    im.src = `assets/zodiac_${s}.webp`; im.alt = s; im.loading = 'lazy';
+    belt.appendChild(im);
+  });
+})();
+</script>
+</body>
+</html>
